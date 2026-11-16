@@ -40,7 +40,7 @@ jobs:
       - name: Install Linux deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y g++-multilib gcc-multilib libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libpulse-dev
+          sudo apt-get install -y g++ gcc libdbus-1-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libx11-dev libxext-dev libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev libpulse-dev libudev-dev
 
       - name: Installing/Updating libraries
         run: |
@@ -55,7 +55,7 @@ jobs:
           haxelib set flixel-animate git
           haxelib set hxdiscord_rpc git
 
-      - name: Update submodules
+      - name: Update Lime submodules
         run: |
           cd $(haxelib libpath lime)
           git submodule update --init --recursive
@@ -66,8 +66,11 @@ jobs:
           haxe compile.hxml
 
       - name: Rebuild Lime (Linux)
+        env:
+          CPLUS_INCLUDE_PATH: /usr/include/dbus-1.0:/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+          C_INCLUDE_PATH: /usr/include/dbus-1.0:/usr/lib/x86_64-linux-gnu/dbus-1.0/include
         run: |
-          haxelib run lime rebuild linux -release
+          haxelib run lime rebuild linux -64 -release
           ls -la $(haxelib libpath lime)ndll/*/ || true
 
       - name: Configure Android
